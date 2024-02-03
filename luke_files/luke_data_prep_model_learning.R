@@ -16,7 +16,7 @@ event_def <- fread("Event Definitions.csv")
 luke_export_dir <- 'C:/Users/lavil/source/repos/LukVill/Misc Data/export_no_dup.csv'
 
 # this is based off of Luke's directory!!! #
-export <- fread(luke_export_dir, nrows = 1000)
+export <- fread(luke_export_dir)
 export <- export %>% select(-1)
 export$Date <- as.Date(export$Date)
 glimpse(export)
@@ -38,3 +38,17 @@ for pair in
 {
   print(pair)
 }
+export$ed_id %>% unique()
+
+
+
+
+# get customers that ordered but did not activate account
+# cust ordered
+order_cust <- export %>% filter(ed_id == 18 | ed_id == 7) %>% 
+select(customer_id) %>% distinct()
+# customers that ordered and activate
+order_act_cust <- export %>% filter(customer_id %in% order_cust$customer_id & ed_id == 29) %>%
+select(customer_id)
+# customers who ordered but not activate
+order_noAct_cust <- order_cust %>% filter(!(customer_id %in% order_act_cust$customer_id))
