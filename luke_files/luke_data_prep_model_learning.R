@@ -52,3 +52,6 @@ order_act_cust <- export %>% filter(customer_id %in% order_cust$customer_id & ed
 select(customer_id)
 # customers who ordered but not activate
 order_noAct_cust <- order_cust %>% filter(!(customer_id %in% order_act_cust$customer_id))
+
+
+export %>% filter(customer_id == 2122397824)
