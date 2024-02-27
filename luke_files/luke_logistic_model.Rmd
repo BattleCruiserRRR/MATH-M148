@@ -1,5 +1,34 @@
 ```{r}
 
+# libraries
+
+library(future)
 library(tidymodels)
 
 ```
+
+```{r}
+
+# parallel computing
+
+# num of cores
+core_count <- availableCores() - 1
+
+plan("multicore", workers = core_count)
+
+```
+
+```{r}
+
+# import data
+df %<-% read.csv("C:/Users/lavil/source/repos/LukVill/Misc Data/export_coded.csv")
+
+```
+
+```{r}
+
+
+
+```
+
+
