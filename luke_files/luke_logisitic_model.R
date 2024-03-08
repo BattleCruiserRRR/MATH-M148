@@ -11,7 +11,7 @@ library(regclass)
 
 #-----
 
-set.seed(123)
+set.seed(206039397)
 
 #-----
 
@@ -141,7 +141,7 @@ f_meas_vec(truth = test$purchased, estimate = log_norm_wf_res)
 f_meas_vec(truth = test$purchased, estimate = log_cen_wf_res)
 f_meas_vec(truth = test$purchased, estimate = log_norm_cen_wf_res)
 
-# ACCURACY
+# ACCURACY (exact matches/total count)
 sum(test$purchased == log_norm_wf_res)/length(test$purchased)
 sum(test$purchased == log_cen_wf_res)/length(test$purchased)
 sum(test$purchased == log_norm_cen_wf_res)/length(test$purchased)
@@ -174,9 +174,9 @@ log_norm_cen_wf_fit %>%  extract_fit_parsnip() %>% tidy() %>% arrange(by = desc(
 top_feat_purchase <- log_norm_cen_wf_fit %>%  extract_fit_parsnip() %>% tidy() %>% 
 arrange(by = desc(abs(estimate))) %>% filter(estimate >= 0) %>% head(n = 5) %>% pull(term)
 
-preds <- log_norm_cen_wf_fit %>% predict(new_data = df) %>% pull(.pred_class)
-
 df <- read.csv("C:/Users/lavil/source/repos/LukVill/Misc Data/export_freq.csv")
+
+preds <- log_norm_cen_wf_fit %>% predict(new_data = df) %>% pull(.pred_class)
 
 df <- df %>% mutate(preds = preds)
  
@@ -185,5 +185,15 @@ df <- df %>% mutate(preds = preds)
 
 write.csv(df, file = "export_purchased_preds.csv")
 
-# sum(df$purchased)/nrow(df)
+#----- GRAPHICS
+
+top_feat <- log_norm_cen_wf_fit %>%  extract_fit_parsnip() %>% tidy() %>% 
+  arrange(by = desc(abs(estimate)))
+
+top_feat_sum <- top_feat %>% slice(-2) %>% select(estimate) %>% mutate(estimate = abs(estimate)) %>% sum()
+
+top_feat_pct <- top_feat %>% select(term,estimate) %>% 
+mutate(estimate = abs(estimate)/top_feat_sum) %>% slice(-2)
+
+
 
