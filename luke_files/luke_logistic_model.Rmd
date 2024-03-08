@@ -18,6 +18,7 @@ plan("multicore", workers = core_count)
 
 ```
 
+
 ```{r}
 
 # import data
