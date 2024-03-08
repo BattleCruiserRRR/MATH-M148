@@ -174,7 +174,8 @@ log_norm_cen_wf_fit %>%  extract_fit_parsnip() %>% tidy() %>% arrange(by = desc(
 top_feat_purchase <- log_norm_cen_wf_fit %>%  extract_fit_parsnip() %>% tidy() %>% 
 arrange(by = desc(abs(estimate))) %>% filter(estimate >= 0) %>% head(n = 5) %>% pull(term)
 
-df <- read.csv("C:/Users/lavil/source/repos/LukVill/Misc Data/export_freq.csv")
+df <- read.csv("C:/Users/lavil/source/repos/LukVill/Misc Data/export_freq.csv") %>%
+mutate(purchased = if_else(X18 != 0 | X7 != 0, 1, 0))
 
 preds <- log_norm_cen_wf_fit %>% predict(new_data = df) %>% pull(.pred_class)
 
@@ -187,6 +188,15 @@ write.csv(df, file = "export_purchased_preds.csv")
 
 #----- GRAPHICS
 
+
+# FREQUENCY
+
+freq_sum <- df %>% select(-c(1,2,purchased,preds)) %>% apply(2,sum)
+
+# write.csv(freq_sum, file = "freq_sum.csv")
+
+# FEATURE IMPORTANCE
+
 top_feat <- log_norm_cen_wf_fit %>%  extract_fit_parsnip() %>% tidy() %>% 
   arrange(by = desc(abs(estimate)))
 
@@ -195,5 +205,21 @@ top_feat_sum <- top_feat %>% slice(-2) %>% select(estimate) %>% mutate(estimate 
 top_feat_pct <- top_feat %>% select(term,estimate) %>% 
 mutate(estimate = abs(estimate)/top_feat_sum) %>% slice(-2)
 
+# top_feat_pct %>% select(estimate) %>% sum()
 
+# export out top feature percent of influence to classification
+# write.csv(top_feat_pct, file = "top_feat_pct.csv")
 
+#----- ANALYTICS
+
+# test accuracy
+sum(test$purchased == log_norm_wf_res)/length(test$purchased)
+
+# total data accuracy
+sum(df$preds == df$purchased)/nrow(df)
+
+# test f measure
+f_meas_vec(truth = test$purchased, estimate = log_norm_wf_res)
+
+# total data f measure
+f_meas_vec(truth = factor(df$purchased), estimate = df$preds)
