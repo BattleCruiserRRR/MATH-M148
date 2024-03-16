@@ -186,7 +186,6 @@ df <- df %>% mutate(preds = preds)
 
 write.csv(df, file = "export_purchased_preds.csv")
 
- 
 #----- GRAPHICS
 
 
