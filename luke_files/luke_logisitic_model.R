@@ -27,6 +27,9 @@ plan("multicore", workers = core_count)
 # import data
 df <- read.csv("C:/Users/lavil/source/repos/LukVill/Misc Data/export_freq.csv")
 
+# df <- read.csv("C:/Users/lavil/source/repos/LukVill/Misc Data/export.csv",nrow = 10000)
+# df %>% filter(ed_id == 10) %>% head()
+
 #----- DATA MANIPULATION
 
 # make response variable column if the variable exists (if either event exists, set to 1), remove id cols, remove 18 and 7
@@ -44,7 +47,8 @@ df$purchased <- as.factor(df$purchased)
 # multicollinearity
 corrplot(cor(df %>% select(-purchased)))
 
-# event 9 is nonexistent for all customers
+# event 9 and 17 is nonexistent for all customers
+corrplot(cor(df %>% select(-purchased,-X9,-X17)))
 
 #----- TRAINING PREP
 
@@ -223,3 +227,5 @@ f_meas_vec(truth = test$purchased, estimate = log_norm_wf_res)
 
 # total data f measure
 f_meas_vec(truth = factor(df$purchased), estimate = df$preds)
+
+
